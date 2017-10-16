@@ -8,7 +8,7 @@ function setup() {
 function draw() {
 	background(50, 150, 150);
 	h.update();
-	h.show():
+	h.show();
 }
 
 class Hole{
