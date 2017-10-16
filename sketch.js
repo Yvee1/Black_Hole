@@ -12,25 +12,22 @@ function draw() {
 }
 
 class Hole{
-	let pos;
-	let posLocked;
-	const gravity = 1;
-
 	constructor(){
-		pos = createVector(width/2, height/2);
-		posLocked = true;
+		this.pos = createVector(width/2, height/2);
+		this.posLocked = true;
+		this.gravity = 1;
 	}
 
 	update(){
-		if(!posLocked){
-			pos.x = mouseX;
-			pos.y = mouseY;
+		if(!this.posLocked){
+			this.pos.x = mouseX;
+			this.pos.y = mouseY;
 		}
 	}
 
 	show(){
 		fill(0);
 		noStroke();
-		ellipse(pos.x, pos.y, 150, 150);
+		ellipse(this.pos.x, this.pos.y, 150, 150);
 	}
 }
