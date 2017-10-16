@@ -33,7 +33,11 @@ function draw() {
 }
 
 function mousePressed(){
-	h.posLocked = !h.posLocked;
+	h.posLocked = false;
+}
+
+function mouseReleased(){
+	h.posLocked = true;
 }
 
 class Hole{
