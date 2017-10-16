@@ -1,25 +1,47 @@
+// Better performance
+p5.disableFriendlyErrors = true;
+
 let h;
-let p;
+let particles;
+
 function setup() {
-	createCanvas(windowWidth, windowHeight);
+	createCanvas(500, 500);
 	h = new Hole();
-	p = new Particle();
+	particles = [];
+	for (let i = 0; i < 150; i++){
+		particles.push(new Particle(true));
+	}
 }
 
 function draw() {
 	background(50, 150, 150);
+	particles.push(new Particle());
+
+	// Iterate backwards over the particles
+	for(let i = particles.length-1; i >= 0; i--){
+		p = particles[i];
+		p.update();
+		if (!p.alive){
+			particles.splice(i, 1);
+			continue;
+		}
+		p.show();
+	}
+
 	h.update();
-	p.update();
 	h.show();
-	p.show();
+}
+
+function mousePressed(){
+	h.posLocked = !h.posLocked;
 }
 
 class Hole{
 	constructor(){
 		this.pos = createVector(width/2, height/2);
 		this.posLocked = true;
-		this.gravity = 0.01;
-		this.r = 75;
+		this.gravity = 1000;
+		this.r = 40;
 	}
 
 	update(){
@@ -37,24 +59,63 @@ class Hole{
 }
 
 class Particle{
-	constructor(){
-		this.pos = createVector(random(-200, width+200),
-								random(-200, height+200));
+	constructor(firstTime = false){
+		// At the start particles have to be at a random spot
+		if (firstTime){
+			this.pos = createVector(random(0, width),
+									random(0, height));
+		}
+
+		// Otherwise spawn them outside the screen at a random spot
+		else{
+			if (random(0,1)<0.5){
+				let x = random(-50, width+50);
+				if (x>=0 && x<=width){
+					if (random(0,1)<0.5){
+						this.pos = createVector(x, random(-50, 0));
+					}
+					else{
+						this.pos = createVector(x, height+random(0, 50));
+					}
+				}
+
+				else{
+					this.pos = createVector(x, random(-50, height+50));
+				}
+			}
+
+			else{
+				let y = random(-50, width+50);
+				if (y>=0 && y<=height){
+					if (random(0,1)<0.5){
+						this.pos = createVector(random(-50, 0), y);
+					}
+					else{
+						this.pos = createVector(width+random(0, 50), y);
+					}
+				}
+
+				else{
+					this.pos = createVector(random(-50, width+50), y);
+				}
+			}
+		}
+
 		this.vel = createVector(0, 0);
 		this.acc = createVector(0, 0);
 		this.alive = true;
-		this.r = random(1, 20);
+		this.r = random(1, 8);
 	}
 
 	update(){
 		// Reset acceleration
-		acc.mult(0);
+		this.acc.mult(0);
 		// Calculate distance between particle and black hole
-		let d = pos.dist(h.pos);
+		let d = this.pos.dist(h.pos);
 		// If particle too far of the screen or if in black hole set it dead
-		if(this.pos.x <- 200 || this.pos.x > width + 200 ||
-		   this.pos.y < -200 || this.pos.y > height + 200||
-	   	   d < h.r){
+		if(this.pos.x <- 50 || this.pos.x > width + 50 ||
+		   this.pos.y < -50 || this.pos.y > height + 50||
+	   	   d < (h.r - this.r)){
 			   this.alive = false;
 		   }
 		// Calculate force on this object
